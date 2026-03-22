@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ pokemon.name }} 정보{% endblock %}
+
+{% set type_kor = {
+  "grass": "풀",
+  "fire": "불꽃",
+  "water": "물",
+  "bug": "벌레",
+  "poison": "독",
+  "flying": "비행",
+  "normal": "노말",
+  "electric": "전기",
+  "steel" : "강철",
+  "fighting" : "격투"
+} %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card soft-card border-0">
+      {% if pokemon.image_path %}
+      <img src="{{ pokemon.image_path }}"
+           class="card-img-top"
+           style="max-height: 220px; object-fit: contain; padding: 1rem;"
+           alt="{{ pokemon.name }}">
+      {% endif %}
+      <div class="card-body">
+        <h3 class="card-title mb-1">
+          No.{{ "%03d"|format(pokemon.id) }} {{ pokemon.name }}
+        </h3>
+        <div class="mb-2">
+          {% for t in pokemon.types %}
+            <span class="type-badge type-{{ t }}">
+              {{ type_kor[t] }}
+            </span>
+          {% endfor %}
+        </div>
+
+        <h5 class="mt-3 mb-2">종족치</h5>
+        <table class="table table-sm mb-3">
+          <tbody>
+            <tr>
+              <th style="width: 30%;">HP</th>
+              <td>{{ pokemon.hp }}</td>
+            </tr>
+            <tr>
+              <th>공격</th>
+              <td>{{ pokemon.attack }}</td>
+            </tr>
+            <tr>
+              <th>방어</th>
+              <td>{{ pokemon.defense }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {% if owned %}
+          <span class="badge bg-success mb-3">✅내 도감에 등록됨</span>
+        {% else %}
+          <span class="badge bg-secondary mb-3">미등록</span>
+        {% endif %}
+
+        <div class="d-grid gap-2">
+          {% if not owned %}
+          <form method="post" action="{{ url_for('catch', pid=pokemon.id) }}">
+            <button type="submit" class="btn btn-primary w-100">
+              포획하기
+            </button>
+          </form>
+          {% endif %}
+          <a href="{{ url_for('pokedex') }}" class="btn btn-outline-secondary w-100">
+            ← 도감으로 돌아가기
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}{{ username }}의 포켓몬 도감{% endblock %}
+
+{% set type_kor = {
+  "grass": "풀",
+  "fire": "불꽃",
+  "water": "물",
+  "bug": "벌레",
+  "poison": "독",
+  "flying": "비행",
+  "normal": "노말",
+  "electric": "전기",
+  "fighting": "격투",
+  "steel": "강철"
+} %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="mb-1" style="font-family: 'Do Hyeon', sans-serif;">
+      {{ username }}의 포켓몬 도감
+    </h2>
+    <p class="mb-0 text-muted">
+      진척도: <strong>{{ have_count }} / {{ total_count }}</strong>
+      ({{ (progress * 100) | round(1) }}%)
+    </p>
+
+    {% set current_view = view or 'all' %}
+
+    <div class="btn-group btn-group-sm mt-2">
+      <a href="{{ url_for('pokedex', view='all', q=q) }}"
+        class="btn filter-btn filter-all btn-outline-secondary
+            {% if current_view == 'all' %}active{% endif %}">
+        전체
+      </a>
+
+      <a href="{{ url_for('pokedex', view='owned', q=q) }}"
+        class="btn filter-btn filter-owned btn-outline-success
+            {% if current_view == 'owned' %}active{% endif %}">
+        보유
+      </a>
+
+      <a href="{{ url_for('pokedex', view='unowned', q=q) }}"
+        class="btn filter-btn filter-unowned btn-outline-warning
+            {% if current_view == 'unowned' %}active{% endif %}">
+        미보유
+      </a>
+    </div>
+  </div>
+  <div class="text-end">
+    <div class="mb-2">
+      <span class="badge bg-primary">마스터 도감</span>
+    </div>
+    <form class="d-flex" method="get" action="{{ url_for('pokedex') }}">
+      <input type="hidden" name="view" value="{{ view or 'all' }}">
+      <input type="text"
+             name="q"
+             class="form-control form-control-sm me-2"
+             placeholder="이름 / 번호 / 타입 검색"
+             value="{{ q or '' }}">
+      <button type="submit" class="btn btn-sm btn-outline-light border-0"
+              style="background-color:#8ecaff; color:white;">
+        🔍
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- 한 줄에 6마리까지: xs:2, md:4, lg:6 -->
+{% if pokemons %}
+  <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
+    {% for p in pokemons %}
+    <div class="col">
+      <div class="card h-100 pokemon-card">
+        {% if p.image_path %}
+        <img src="{{ p.image_path }}" class="card-img-top pokemon-card-img" alt="{{ p.name }}">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">No.{{ "%03d"|format(p.id) }} {{ p.name }}</h5>
+          <div class="mb-1">
+            {% for t in p.types %}
+            <span class="type-badge type-{{ t }}">
+              {{ type_kor[t] }}
+            </span>
+            {% endfor %}
+          </div>
+          {% if p.id in owned_ids %}
+            <span class="badge bg-success">보유 중</span>
+          {% else %}
+            <span class="badge bg-secondary">미보유</span>
+          {% endif %}
+        </div>
+        <div class="card-footer bg-white border-0">
+          <div class="d-grid gap-1">
+            <a href="{{ url_for('pokemon_detail', pid=p.id) }}"
+              class="btn btn-sm w-100"
+              style="background-color:#D4F4FA; border-color:#D4F4FA; color:black; font-size:0.77rem;">
+              ℹ️정보보기
+            </a>
+
+            {% if p.id not in owned_ids %}
+            <form method="post" action="{{ url_for('catch', pid=p.id) }}">
+              <button type="submit" class="btn btn-sm btn-primary w-100">
+                ⭕포획하기
+              </button>
+            </form>
+            {% else %}
+            <form method="post" action="{{ url_for('release', pid=p.id) }}">
+              <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+              ❌포획 취소
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-warning mt-3">
+    검색 결과가 없습니다. 다른 이름 / 번호 / 타입으로 다시 검색해보세요.
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}로그인 : 포켓몬 도감{% endblock %}
+
+{% block content %}
+<div class="row align-items-center" style="min-height: 70vh;">
+  <!-- 왼쪽: 소개 영역 -->
+  <div class="col-lg-6 mb-4 mb-lg-0">
+    <h1 class="display-5 fw-bold mb-3 logo-text">POKEDEX PROJECT</h1>
+    <p class="subtitle-text mb-3">
+      세대별 포켓몬을 수집하고, 나만의 도감을 완성해보자!<br>
+      트레이너마다 개별 도감이 저장되며, 언제든 다시 이어서 모을 수 있어요.
+    </p>
+    <ul class="subtitle-text">
+      <li>마스터 도감에서 포켓몬 정보 확인</li>
+      <li>버튼 한 번으로 포켓몬 포획</li>
+      <li>진척도(%)로 수집 상황 확인</li>
+    </ul>
+  </div>
+
+  <!-- 오른쪽: 로그인 카드 -->
+  <div class="col-lg-5 offset-lg-1">
+    <div class="card soft-card border-0">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center mb-3">
+          <img src="/static/images/monsterball.png"
+            alt="몬스터볼"
+            class="me-2"
+            style="height: 45px; width: 45px; object-fit: contain;">
+          <div>
+            <h3 class="card-title mb-0" style="font-family: 'Do Hyeon', sans-serif;">
+              포켓몬 도감 로그인</h3>
+          </div>
+        </div>
+
+        <form method="post" action="{{ url_for('login') }}" style="font-family: 'Jua', sans-serif;">
+          <div class="mb-3">
+            <label class="form-label">트레이너 이름 입력하기</label>
+            <input type="text" name="username" class="form-control" placeholder="예: Ash, Red, N">
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mb-2">
+            🌟 도감에 입장하기
+          </button>
+          <small class="text-muted">
+            같은 이름으로 다시 로그인하면 이전에 모은 도감을 그대로 이어서 사용할 수 있어요.
+          </small>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
